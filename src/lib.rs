@@ -16,6 +16,7 @@ impl<T> Coord<T>
 where
     T: Num + ToPrimitive + Copy,
 {
+    /// Calculate the Euclidean distance (straight line) between this Coord and `other`
     pub fn distance_to(&self, other: &Self) -> f32 {
         let x_diff = self.x - other.x;
         let y_diff = self.y - other.y;
@@ -28,8 +29,17 @@ where
 
 impl<T> Coord<T>
 where
-    T: Integer + Copy,
+    T: Integer + ToPrimitive + Copy,
 {
+    pub fn manhattan_distance(&self, other: &Self) -> u64 {
+        let x_diff = self.x - other.x;
+        let y_diff = self.y - other.y;
+        (num::abs(x_diff.to_i64().unwrap()) + num::abs(y_diff.to_i64().unwrap()))
+            .to_u64()
+            .unwrap()
+    }
+
+    /// Returns a slice containing the 8 surrounding neighbors to this Coord
     pub fn neighbors(&self) -> [Self; 8] {
         [
             self.up(),
@@ -43,38 +53,47 @@ where
         ]
     }
 
+    /// Returns a slice containing the 4 surrounding cardinal neighbors to this Coord
     pub fn cardinal_neighbors(&self) -> [Self; 4] {
         [self.up(), self.right(), self.down(), self.left()]
     }
 
+    /// Returns the Coord above this Coord
     pub fn up(&self) -> Self {
         Self::new(self.x, self.y + T::one())
     }
 
+    /// Returns the Coord above and to the right of this Coord
     pub fn up_right(&self) -> Self {
         Self::new(self.x + T::one(), self.y + T::one())
     }
 
+    /// Returns the Coord to the right of this Coord
     pub fn right(&self) -> Self {
         Self::new(self.x + T::one(), self.y)
     }
 
+    /// Returns the Coord below and to the right of this Coord
     pub fn down_right(&self) -> Self {
         Self::new(self.x + T::one(), self.y - T::one())
     }
 
+    /// Returns the Coord below this Coord
     pub fn down(&self) -> Self {
         Self::new(self.x, self.y - T::one())
     }
 
+    /// Returns the Coord below and to the left of this Coord
     pub fn down_left(&self) -> Self {
         Self::new(self.x - T::one(), self.y - T::one())
     }
 
+    /// Returns the Coord to the left of this Coord
     pub fn left(&self) -> Self {
         Self::new(self.x - T::one(), self.y)
     }
 
+    /// Returns the Coord above and to the left of this Coord
     pub fn up_left(&self) -> Self {
         Self::new(self.x - T::one(), self.y + T::one())
     }
@@ -114,11 +133,17 @@ mod tests {
     }
 
     #[test]
-    fn distance() {
+    fn euclidean_distance() {
         assert_eq!(1.4142135, Coord::new(0, 0).distance_to(&Coord::new(1, 1)));
         assert_eq!(
             1.4142135,
             Coord::new(0., 0.).distance_to(&Coord::new(-1., -1.))
         );
+    }
+
+    #[test]
+    fn manhattan_distance() {
+        assert_eq!(6, Coord::new(0, 0).manhattan_distance(&Coord::new(3, 3)));
+        assert_eq!(6, Coord::new(0, 0).manhattan_distance(&Coord::new(-3, -3)));
     }
 }
