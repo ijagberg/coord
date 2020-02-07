@@ -1,4 +1,4 @@
-use num::Integer;
+use num::{Integer, Num, ToPrimitive};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Coord<T> {
@@ -9,6 +9,20 @@ pub struct Coord<T> {
 impl<T> Coord<T> {
     pub fn new(x: T, y: T) -> Self {
         Self { x, y }
+    }
+}
+
+impl<T> Coord<T>
+where
+    T: Num + ToPrimitive + Copy,
+{
+    pub fn distance_to(&self, other: &Self) -> f32 {
+        let x_diff = self.x - other.x;
+        let y_diff = self.y - other.y;
+        ((x_diff * x_diff) + (y_diff * y_diff))
+            .to_f32()
+            .unwrap()
+            .sqrt()
     }
 }
 
@@ -96,6 +110,15 @@ mod tests {
                 Coord::new(-1, 0)
             ],
             origo.cardinal_neighbors()
+        );
+    }
+
+    #[test]
+    fn distance() {
+        assert_eq!(1.4142135, Coord::new(0, 0).distance_to(&Coord::new(1, 1)));
+        assert_eq!(
+            1.4142135,
+            Coord::new(0., 0.).distance_to(&Coord::new(-1., -1.))
         );
     }
 }
