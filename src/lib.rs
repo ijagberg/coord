@@ -1,6 +1,6 @@
 use num::{Integer, Num, ToPrimitive};
 
-#[derive(Debug, Clone, PartialEq, Hash, Default)]
+#[derive(Debug, Clone, PartialEq, Hash, Default, Eq)]
 pub struct Coord<T> {
     pub x: T,
     pub y: T,
