@@ -31,6 +31,7 @@ impl<T> Coord<T>
 where
     T: Integer + ToPrimitive + Copy,
 {
+    /// Calculate the Manhattan distance between this Coord and `other`
     pub fn manhattan_distance(&self, other: &Self) -> u64 {
         let x_diff = self.x - other.x;
         let y_diff = self.y - other.y;
@@ -96,6 +97,12 @@ where
     /// Returns the Coord above and to the left of this Coord
     pub fn up_left(&self) -> Self {
         Self::new(self.x - T::one(), self.y + T::one())
+    }
+}
+
+impl<T> From<(T, T)> for Coord<T> {
+    fn from(tuple: (T, T)) -> Self {
+        Coord::new(tuple.0, tuple.1)
     }
 }
 
